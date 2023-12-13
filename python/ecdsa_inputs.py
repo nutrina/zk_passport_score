@@ -60,14 +60,22 @@ class SECP256k1:
     def sign_and_print(self, message):
         data = self.sign(message)
         print("let message_hash =", list(data["message"]), ";")
+        print("----------------------------------------------------")
         print("raw sign: ", data["signature"])
+        print("----------------------------------------------------")
         print(data["signature"].hex())
+        print("----------------------------------------------------")
         print("let signature = ", list(bytes.fromhex(data["signature"].hex())), ";")
+        print("----------------------------------------------------")
         keys = self.load()
         print("X coordinate: ", keys["public_key_x"])
+        print("----------------------------------------------------")
         print("Y coordinate: ", keys["public_key_y"])
+        print("----------------------------------------------------")
         print("Hex Public Uncompressed: ", keys["public_key_hex"])
+        print("----------------------------------------------------")
         print("Hex Public Compressed: ", keys["public_key_hex_compressed"])
+        print("----------------------------------------------------")
         print("Ethereum Address: ", keys["public_evm_address"])
 
 
@@ -91,15 +99,49 @@ secp = SECP256k1()
 # secp.store(secp.new())
 # sign an oversimplified transaction
 # There is a length issue if the full address is provided below. Unable to verify signature
-stamp_hash = "v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ="
-provider = "google"
+# stamp_hash = "v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ="
+# provider = "google"
 
-message = f"{stamp_hash}:{provider}"
+# message = f"{stamp_hash}:{provider}"
 
-print("message: ", message)
+# print("message: ", message)
 
-secp.sign_and_print(message)
+# secp.sign_and_print(message)
 
-print("stamp_hash bytes: ", list(bytes("v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", 'utf-8')))
-print("seperator bytes: ", list(bytes(":", 'utf-8')))
-print("provider bytes: ", list(bytes("google", 'utf-8')))
+# print("stamp_hash bytes: ", list(bytes("v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", 'utf-8')))
+# print("provider bytes: ", list(bytes("google", 'utf-8')))
+
+
+
+
+
+
+def prepare_stamp_input(stamp_hash, provider):
+    message = f"{stamp_hash}:{provider}"
+
+    print(message, "message")
+
+    secp.sign_and_print(message)
+
+    print("stamp_hash bytes: ", list(bytes(stamp_hash, 'utf-8')))
+    print("provider bytes: ", list(bytes(provider, 'utf-8')))
+
+
+# prepare_stamp_input("v3.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", "facebook")
+# prepare_stamp_input("v1.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", "00google")
+
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+
+prepare_stamp_input("v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", "aagoogle")
+
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+
+prepare_stamp_input("v0.0.0:samplehash", "facebook")
+
+
