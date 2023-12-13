@@ -93,8 +93,13 @@ secp = SECP256k1()
 # There is a length issue if the full address is provided below. Unable to verify signature
 stamp_hash = "v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ="
 provider = "google"
+
 message = f"{stamp_hash}:{provider}"
 
 print("message: ", message)
 
 secp.sign_and_print(message)
+
+print("stamp_hash bytes: ", list(bytes("v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", 'utf-8')))
+print("seperator bytes: ", list(bytes(":", 'utf-8')))
+print("provider bytes: ", list(bytes("google", 'utf-8')))
