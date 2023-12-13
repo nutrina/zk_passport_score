@@ -1,4 +1,5 @@
 import pickle, os
+from turtle import stamp
 import ecdsa, hashlib
 from Crypto.Hash import keccak
 
@@ -41,10 +42,10 @@ class SECP256k1:
     def sign(self, message):
         data = self.load()
         private_key = data["private_key"]
-
-        user_msg = message
+        encoded_msg = message.encode('utf-8')
+        print("encoded_msg: ", encoded_msg)
         # hash the message and sign the hash
-        message_hash = hashlib.sha256(user_msg.encode('utf-8')).hexdigest()
+        message_hash = hashlib.sha256(encoded_msg).hexdigest()
         message_bytes = bytes.fromhex(message_hash)
         signature = private_key.sign_deterministic(
             message_bytes, 
@@ -59,6 +60,7 @@ class SECP256k1:
     def sign_and_print(self, message):
         data = self.sign(message)
         print("let message_hash =", list(data["message"]), ";")
+        print("raw sign: ", data["signature"])
         print(data["signature"].hex())
         print("let signature = ", list(bytes.fromhex(data["signature"].hex())), ";")
         keys = self.load()
@@ -67,6 +69,7 @@ class SECP256k1:
         print("Hex Public Uncompressed: ", keys["public_key_hex"])
         print("Hex Public Compressed: ", keys["public_key_hex_compressed"])
         print("Ethereum Address: ", keys["public_evm_address"])
+
 
     def public_key_to_eth_address(self, public_key_hex):
         # Decode the hex public key to bytes
@@ -88,5 +91,10 @@ secp = SECP256k1()
 # secp.store(secp.new())
 # sign an oversimplified transaction
 # There is a length issue if the full address is provided below. Unable to verify signature
-test_short_user_address = "0x123456789"
-secp.sign_and_print(f"did:pkh:eip1551:{test_short_user_address}")
+stamp_hash = "v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ="
+provider = "google"
+message = f"{stamp_hash}:{provider}"
+
+print("message: ", message)
+
+secp.sign_and_print(message)
