@@ -84,8 +84,8 @@ class SECP256k1:
         print("provider_bytes: ", list(bytes(provider, 'utf-8')))
 
         return {
-            "message_hash": data["message"],
-            "signature": data["signature"],
+            "message_hash": list(data["message"]),
+            "signature": list(bytes.fromhex(data["signature"].hex())),
             "public_key_x": keys["public_key_x"],
             "public_key_y": keys["public_key_y"],
             "stamp_hash_bytes": list(bytes(stamp_hash, 'utf-8')),
@@ -139,30 +139,41 @@ def prepare_stamp_input(stamp_hash, provider):
 
     print("----------------------------------------------------")
     print(signature_data)
+    return signature_data
 
     
 
-
-
-
-# prepare_stamp_input("v3.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", "facebook")
-# prepare_stamp_input("v1.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", "00google")
-
-print("----------------------------------------------------")
-print("----------------------------------------------------")
-print("----------------------------------------------------")
-print("----------------------------------------------------")
-
-prepare_stamp_input("v0.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", "aagoogle")
-
 print("----------------------------------------------------")
 print("----------------------------------------------------")
 print("----------------------------------------------------")
 print("----------------------------------------------------")
 
 
-prepare_stamp_input("v0.0.0:samplehash", "facebook")
+# This is aa google so that a uniform length is used for providers
+google = prepare_stamp_input("v0.0.1:samplehash", "aagoogle")
+facebook = prepare_stamp_input("v0.0.0:samplehash", "facebook")
 
 
+pub_key_x = facebook["public_key_x"]
+pub_key_y = facebook["public_key_y"]
 
+
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+print("----------------------------------------------------")
+
+print(f"let stamp_hash_bytes_google = {google['stamp_hash_bytes']};")
+print(f"let provider_bytes_google = {google['provider_bytes']};")
+print(f"let message_hash_google = {google['message_hash']};")
+print(f"let signature_google = {google['signature']};")
+print(f"let pub_key_x_google = {pub_key_x};")
+print(f"let pub_key_y_google = {pub_key_y};")
+print("----------------------------------------------------")
+print(f"let stamp_hash_bytes_facebook = {facebook['stamp_hash_bytes']};")
+print(f"let provider_bytes_facebook = {facebook['provider_bytes']};")
+print(f"let message_hash_facebook = {facebook['message_hash']};")
+print(f"let signature_facebook = {facebook['signature']};")
+print(f"let pub_key_x = {pub_key_x};")
+print(f"let pub_key_y = {pub_key_y};")
 
