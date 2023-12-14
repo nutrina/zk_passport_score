@@ -1,3 +1,4 @@
+import base64
 import pickle, os
 from turtle import stamp
 import ecdsa, hashlib
@@ -42,10 +43,10 @@ class SECP256k1:
     def sign(self, message):
         data = self.load()
         private_key = data["private_key"]
-        encoded_msg = message.encode('utf-8')
-        print("encoded_msg: ", encoded_msg)
+        # encoded_msg =  message.encode('utf-8')
+        # print("encoded_msg: ", encoded_msg)
         # hash the message and sign the hash
-        message_hash = hashlib.sha256(encoded_msg).hexdigest()
+        message_hash = hashlib.sha256(message).hexdigest()
         message_bytes = bytes.fromhex(message_hash)
         signature = private_key.sign_deterministic(
             message_bytes, 
@@ -80,16 +81,16 @@ class SECP256k1:
         print("----------------------------------------------------")
         print("Ethereum Address: ", keys["public_evm_address"])
 
-        print("stamp_hash_bytes: ", list(bytes(stamp_hash, 'utf-8')))
-        print("provider_bytes: ", list(bytes(provider, 'utf-8')))
+        # print("stamp_hash_bytes: ", list(bytes(stamp_hash, 'utf-8')))
+        # print("provider_bytes: ", list(bytes(provider, 'utf-8')))
 
         return {
             "message_hash": list(data["message"]),
             "signature": list(bytes.fromhex(data["signature"].hex())),
             "public_key_x": keys["public_key_x"],
             "public_key_y": keys["public_key_y"],
-            "stamp_hash_bytes": list(bytes(stamp_hash, 'utf-8')),
-            "provider_bytes": list(bytes(provider, 'utf-8'))
+            # "stamp_hash_bytes": list(bytes(stamp_hash, 'utf-8')),
+            # "provider_bytes": list(bytes(provider, 'utf-8'))
         }
 
 
@@ -131,7 +132,8 @@ secp = SECP256k1()
 
 
 def prepare_stamp_input(stamp_hash, provider):
-    message = f"{stamp_hash}:{provider}"
+    print(stamp_hash, provider, "stamp_hash, provider")
+    message = stamp_hash+provider
 
     print(message, "message")
 
@@ -149,9 +151,31 @@ print("----------------------------------------------------")
 print("----------------------------------------------------")
 
 
+
+
+
+# "0x" + Buffer.from(credential.credentialSubject.hash.split(":")[1], "base64").toString("hex");
+
 # This is aa google so that a uniform length is used for providers
-google = prepare_stamp_input("v0.0.1:samplehash", "aagoogle")
-facebook = prepare_stamp_input("v0.0.0:samplehash", "facebook")
+# stamp_hash_facebook = hashlib.sha256('GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ='.encode('utf-8')).hexdigest()
+
+facebook_provider = '6f028453ddea055c2bfd6baeffa906ae6954e0bb90083e4b76c86058e9e2c08a'
+google_provider = 'f610f88085f5955bccb50431e1315a28335522d87be5000ff334274cc9985741'
+
+print(base64.b64decode('GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=').hex())
+
+facebook_stamp_hash = 'GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ='
+google_stamp_hash = 'GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ='
+
+google_provider_bytes = bytes.fromhex(google_provider)
+facebook_provider_bytes = bytes.fromhex(facebook_provider)
+
+
+google_stamp_bytes = base64.b64decode(google_stamp_hash)
+facebook_stamp_bytes = base64.b64decode(facebook_stamp_hash)
+
+google = prepare_stamp_input(google_stamp_bytes, google_provider_bytes)
+facebook = prepare_stamp_input(facebook_stamp_bytes, facebook_provider_bytes)
 
 
 pub_key_x = facebook["public_key_x"]
@@ -163,17 +187,27 @@ print("----------------------------------------------------")
 print("----------------------------------------------------")
 print("----------------------------------------------------")
 
-print(f"let stamp_hash_bytes_google = {google['stamp_hash_bytes']};")
-print(f"let provider_bytes_google = {google['provider_bytes']};")
-print(f"let message_hash_google = {google['message_hash']};")
+# print(f"let stamp_hash_bytes_google = {google['stamp_hash_bytes']};")
+# print(f"let provider_bytes_google = {google['provider_bytes']};")
+# print(f"let message_hash_google = {google['message_hash']};")
 print(f"let signature_google = {google['signature']};")
-print(f"let pub_key_x_google = {pub_key_x};")
-print(f"let pub_key_y_google = {pub_key_y};")
+
 print("----------------------------------------------------")
-print(f"let stamp_hash_bytes_facebook = {facebook['stamp_hash_bytes']};")
-print(f"let provider_bytes_facebook = {facebook['provider_bytes']};")
-print(f"let message_hash_facebook = {facebook['message_hash']};")
+# print(f"let stamp_hash_bytes_facebook = {facebook['stamp_hash_bytes']};")
+# print(f"let provider_bytes_facebook = {facebook['provider_bytes']};")
+# print(f"let message_hash_facebook = {facebook['message_hash']};")
 print(f"let signature_facebook = {facebook['signature']};")
 print(f"let pub_key_x = {pub_key_x};")
 print(f"let pub_key_y = {pub_key_y};")
+
+print("google provider bytes: ")
+print(list(google_provider_bytes))
+print("facebook provider bytes: ")
+print(list(facebook_provider_bytes))
+
+
+print("google stamp hash bytes: ")
+print(list(google_stamp_bytes))
+print("facebook stamp hash bytes: ")
+print(list(facebook_stamp_bytes))
 
