@@ -1,5 +1,5 @@
 [package]
-name = "test_001"
+name = "zk_passport_score"
 type = "bin"
 authors = [""]
 compiler_version = ">=0.19.2"
