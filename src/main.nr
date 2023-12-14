@@ -1,7 +1,12 @@
 use dep::std;
 
 // We support a maximum of 10 stamps ...
-fn main(providers1: [Field;10], providers2: [Field;10], hashes1: pub [Field;10], hashes2: pub [Field;10]) {
+fn main(
+    providers1: [Field;10],
+    providers2: [Field;10],
+    hashes1: pub [Field;10],
+    hashes2: pub [Field;10]
+) {
     // Configure the list of supported providers (provider names are expected to be hashed)
     // The list is split in 2 parts, the first list will contain the first 128 bits of a hash the second one the rest
     // And the list is expected to be sorted by the numeric value of the hash. Inputs are expected to be passed in in the same order.
@@ -22,7 +27,7 @@ fn main(providers1: [Field;10], providers2: [Field;10], hashes1: pub [Field;10],
         let h2_not_zero: bool = hashes2[i] != 0;
         let any_hash: bool = h1_not_zero | h2_not_zero;
 
-        if any_hash  {
+        if any_hash {
             score += weights[i];
         }
     }
@@ -31,7 +36,12 @@ fn main(providers1: [Field;10], providers2: [Field;10], hashes1: pub [Field;10],
 
 #[test]
 fn test_main() {
-    main([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    main(
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    );
     // Uncomment to make test fail
     // main(1, 1);
 }

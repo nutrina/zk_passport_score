@@ -2,12 +2,17 @@
 import { useSearchParams } from 'next/navigation';
 import { ReactElement, useState } from 'react';
 import { set } from 'zod';
+import {
+  BarretenbergBackend,
+  CompiledCircuit,
+} from '@noir-lang/backend_barretenberg';
+import { Noir, ProofData, WitnessMap } from '@noir-lang/noir_js';
+import zk_passport_score from '../../target/zk_passport_score.json';
 
 export default function Page() {
   const searchParams = useSearchParams();
   const [isHuman, setIsHuman] = useState(false);
-
-  const proof = searchParams.get('proof');
+  const [jsonProof, setJsonProof] = useState('');
   let proofDisplay = (
     <div>
       No proof has been provided. Please go to{' '}
@@ -19,24 +24,35 @@ export default function Page() {
     </div>
   );
 
-  if (proof !== null) {
-    proofDisplay = <div>{proof}</div>;
+  if (jsonProof !== '') {
+    proofDisplay = <div>{jsonProof}</div>;
   }
 
   const verifyProof = async () => {
+    const backend = new BarretenbergBackend(
+      zk_passport_score as CompiledCircuit,
+    );
+    const noir = new Noir(zk_passport_score as CompiledCircuit, backend);
+    const jsonProofObj = JSON.parse(jsonProof);
+    
+    const proof: ProofData = {
+      proof: new Uint8Array(jsonProofObj.proof),
+      publicInputs: new Map<number, string>(jsonProofObj.publicInputs),
+    };
+    const verification = await noir.verifyFinalProof(proof);
+    console.log(verification);
     setIsHuman(true);
-  }
+  };
 
-  const doVote = async () => {
-  }
+  const doVote = async () => {};
 
-  const voting = isHuman ? (<div>
-    Congratulations, you have proven to be a human!
-    Please send your vote!
-    <br />
-    <button onClick={doVote}>Vote</button>
-  </div>) : null;
-
+  const voting = isHuman ? (
+    <div>
+      Congratulations, you have proven to be a human! Please send your vote!
+      <br />
+      <button onClick={doVote}>Vote</button>
+    </div>
+  ) : null;
 
   return (
     <main className="flex min-h-screen flex-col p-6">
@@ -60,6 +76,13 @@ export default function Page() {
             </a>
           </p>
 
+          <textarea
+            defaultValue={jsonProof}
+            onChange={(e) => setJsonProof(e.target.value)}
+            rows={40}
+            cols={120}
+          />
+          <pre>{jsonProof}</pre>
           <h3>Your Proof</h3>
           <pre>{proofDisplay}</pre>
 
@@ -67,7 +90,6 @@ export default function Page() {
           <br />
           <br />
           {voting}
-
         </div>
 
         <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
