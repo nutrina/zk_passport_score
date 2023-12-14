@@ -57,7 +57,7 @@ class SECP256k1:
             "message": message_bytes,
             "signature": signature
         }
-    def sign_and_print(self, message):
+    def sign_and_print(self, message, stamp_hash, provider):
         data = self.sign(message)
         print("let message_hash =", list(data["message"]), ";")
         print("----------------------------------------------------")
@@ -66,6 +66,8 @@ class SECP256k1:
         print(data["signature"].hex())
         print("----------------------------------------------------")
         print("let signature = ", list(bytes.fromhex(data["signature"].hex())), ";")
+        print("----------------------------------------------------")
+        print("hex signature = ", data["signature"].hex(), ";")
         print("----------------------------------------------------")
         keys = self.load()
         print("X coordinate: ", keys["public_key_x"])
@@ -77,6 +79,18 @@ class SECP256k1:
         print("Hex Public Compressed: ", keys["public_key_hex_compressed"])
         print("----------------------------------------------------")
         print("Ethereum Address: ", keys["public_evm_address"])
+
+        print("stamp_hash_bytes: ", list(bytes(stamp_hash, 'utf-8')))
+        print("provider_bytes: ", list(bytes(provider, 'utf-8')))
+
+        return {
+            "message_hash": data["message"],
+            "signature": data["signature"],
+            "public_key_x": keys["public_key_x"],
+            "public_key_y": keys["public_key_y"],
+            "stamp_hash_bytes": list(bytes(stamp_hash, 'utf-8')),
+            "provider_bytes": list(bytes(provider, 'utf-8'))
+        }
 
 
     def public_key_to_eth_address(self, public_key_hex):
@@ -121,10 +135,14 @@ def prepare_stamp_input(stamp_hash, provider):
 
     print(message, "message")
 
-    secp.sign_and_print(message)
+    signature_data = secp.sign_and_print(message, stamp_hash, provider)
 
-    print("stamp_hash bytes: ", list(bytes(stamp_hash, 'utf-8')))
-    print("provider bytes: ", list(bytes(provider, 'utf-8')))
+    print("----------------------------------------------------")
+    print(signature_data)
+
+    
+
+
 
 
 # prepare_stamp_input("v3.0.0:GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=", "facebook")
@@ -142,6 +160,9 @@ print("----------------------------------------------------")
 print("----------------------------------------------------")
 print("----------------------------------------------------")
 
+
 prepare_stamp_input("v0.0.0:samplehash", "facebook")
+
+
 
 

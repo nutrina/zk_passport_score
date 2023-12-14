@@ -2,27 +2,6 @@ use dep::std;
 use dep::std::println;
 use dep::ecrecover;
 
-fn main(x: [u32; 5], y: pub [u32; 5]) {
-    // assert(x != y);
-    let mut score = 0;
-    for i in 0..5 {
-        // println(x[i]);
-        // println(y[i]);
-        score += x[i] * y[i];
-    }
-    // println("Score: ");
-    // println(score);
-    let is_ok = (score > 10);
-    // println(is_ok);
-    assert(is_ok == true);
-}
-
-
-#[test]
-fn test_main() {
-    main([1, 1, 1, 1, 1], [1, 2, 3, 4, 5]);
-}
-
 
 fn verify_signature(message_hash : [u8;32], pub_key_x : [u8;32], pub_key_y : [u8;32], signature : [u8;64]) {
     // hash the message again (this happens when we generate a deterministic signature)
@@ -43,7 +22,7 @@ fn test_verify_signature() {
 }
 
 
-fn verify_stamp(stamp_hash: pub [u8;17], provider: [u8;8], trusted_signer: Field, message: str<26>, message_hash : [u8;32], pub_key_x : [u8;32], pub_key_y : [u8;32], signature : [u8;64]) {
+fn verify_stamp(stamp_hash: pub [u8;17], provider: [u8;8], trusted_signer: Field, message_hash : [u8;32], pub_key_x : [u8;32], pub_key_y : [u8;32], signature : [u8;64]) {
     // https://github.com/colinnielsen/ecrecover-noir/tree/main
     let message_hash_2 = std::hash::sha256(message_hash);
 
@@ -66,13 +45,7 @@ fn verify_stamp(stamp_hash: pub [u8;17], provider: [u8;8], trusted_signer: Field
 
     assert(recovered_signer == trusted_signer);
 
-    let hashed_msg = std::hash::sha256(message.as_bytes());
-
-    assert(hashed_msg == message_hash); 
-
     let hashed_combined_msg = std::hash::sha256(combined_message_bytes);
-    println(combined_message_bytes);
-    println(message_hash);
 
     assert(hashed_combined_msg == message_hash); 
 }
@@ -85,12 +58,46 @@ fn test_verify_stamp() {
     let pub_key_y = [211, 232, 46, 182, 4, 74, 247, 123, 164, 157, 138, 102, 69, 90, 221, 123, 163, 149, 197, 48, 99, 43, 123, 165, 161, 23, 43, 120, 28, 250, 107, 209];
     let stamp_hash_bytes = [118, 48, 46, 48, 46, 48, 58, 115, 97, 109, 112, 108, 101, 104, 97, 115, 104];
     let provider_bytes = [102, 97, 99, 101, 98, 111, 111, 107];
-    verify_stamp(stamp_hash_bytes, provider_bytes, 0xc7f222aadac8eef0039f5a8f01b9188e7a715a81, "v0.0.0:samplehash:facebook", message_hash, pub_key_x, pub_key_y, signature);
+    verify_stamp(stamp_hash_bytes, provider_bytes, 0xc7f222aadac8eef0039f5a8f01b9188e7a715a81, message_hash, pub_key_x, pub_key_y, signature);
 }
+
+
+fn main(x: [u32; 5], y: pub [u32; 5]) {
+    // assert(x != y);
+    let mut score = 0;
+    for i in 0..5 {
+        // println(x[i]);
+        // println(y[i]);
+        score += x[i] * y[i];
+    }
+    // println("Score: ");
+    // println(score);
+    let is_ok = (score > 10);
+    // println(is_ok);
+    assert(is_ok == true);
+}
+
+
+#[test]
+fn test_main() {
+    main([1, 1, 1, 1, 1], [1, 2, 3, 4, 5]);
+}
+
+
+
+
+
+
+
+
+
+
 
 // fn verify_hashed_stamp(message_hash: pub Field, message_and_key_hash: Field, private_key: ) {
     
 // }
+
+
 
 // #[test]
 // fn test_verify_stamp() {
