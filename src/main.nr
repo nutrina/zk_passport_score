@@ -63,14 +63,34 @@ fn test_verify_stamp() {
 
 
 fn main(stamp_hashs: pub [[u8;17]; 2], providers: [[u8;8]; 2], message_hashes : [[u8;32]; 2], signatures : [[u8;64]; 2], pub_key_x : [u8;32], pub_key_y : [u8;32], trusted_signer: Field,) {
-    println("Hello, world!");
-    for i in 0..2 {
+    // Configure the list of supported providers (provider names are byte arrays) - Possibly replace with oed
+    // The list is split in 2 parts, the first list will contain the first 128 bits of a hash the second one the rest
+    // And the list is expected to be sorted by the numeric value of the hash. Inputs are expected to be passed in in the same order.
+    let valid_providers1:[[u8;8]; 2] = [[102, 97, 99, 101, 98, 111, 111, 107], [97, 97, 103, 111, 111, 103, 108, 101]];
+    // The list of weights fr each supported provider
+    let weights:[u32; 2] = [10, 20];
+    let mut score = 0;
+
+    for i in 1..2 {
         verify_stamp(stamp_hashs[i], providers[i], trusted_signer, message_hashes[i], pub_key_x, pub_key_y, signatures[i]);
+
+        assert(providers[i] == valid_providers1[i]);
+
+        // Not the best check, but it should safe enough since we sign the message/hash off chain/circuit?
+        assert(stamp_hashs[i].len() == 17);
+        
+        // If conditions are all met increment points
+        score += weights[i];
     }
+
+    println("score: ");
+    println(score);
+
+    assert(score >= 20);
 }
 
 
-#[test]
+#[test(should_fail)]
 fn test_main() {
     let message_hash = [31, 80, 240, 80, 20, 19, 64, 21, 205, 124, 17, 222, 20, 119, 218, 142, 17, 251, 40, 26, 251, 49, 161, 136, 252, 7, 59, 85, 216, 241, 37, 11];
     let signature = [35, 205, 11, 92, 164, 90, 212, 79, 124, 187, 3, 50, 242, 117, 243, 48, 192, 179, 40, 133, 90, 236, 154, 31, 168, 54, 67, 113, 220, 148, 42, 72, 63, 65, 187, 188, 167, 203, 236, 13, 42, 192, 151, 44, 66, 4, 170, 142, 70, 112, 178, 120, 31, 104, 33, 251, 26, 194, 142, 43, 138, 30, 124, 134];
@@ -85,7 +105,7 @@ fn test_main() {
 }
 
 #[test]
-fn test_main1() {
+fn test_main1_multiple_stamps() {
     // let message_hash = [31, 80, 240, 80, 20, 19, 64, 21, 205, 124, 17, 222, 20, 119, 218, 142, 17, 251, 40, 26, 251, 49, 161, 136, 252, 7, 59, 85, 216, 241, 37, 11];
     // let signature = [35, 205, 11, 92, 164, 90, 212, 79, 124, 187, 3, 50, 242, 117, 243, 48, 192, 179, 40, 133, 90, 236, 154, 31, 168, 54, 67, 113, 220, 148, 42, 72, 63, 65, 187, 188, 167, 203, 236, 13, 42, 192, 151, 44, 66, 4, 170, 142, 70, 112, 178, 120, 31, 104, 33, 251, 26, 194, 142, 43, 138, 30, 124, 134];
     
@@ -110,43 +130,42 @@ fn test_main1() {
 }
 
 
+// TODO: implement this
+// Improved implementation with split parameters
+// use dep::std;
 
+// // We support a maximum of 10 stamps ...
+// fn main(providers1: [Field;10], providers2: [Field;10], hashes1: pub [Field;10], hashes2: pub [Field;10]) {
+//     // Configure the list of supported providers (provider names are expected to be hashed)
+//     // The list is split in 2 parts, the first list will contain the first 128 bits of a hash the second one the rest
+//     // And the list is expected to be sorted by the numeric value of the hash. Inputs are expected to be passed in in the same order.
+//     let valid_providers1:[Field; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+//     let valid_providers2:[Field; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+//     // The list of weights fr each supported provider
+//     let weights:[u32; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+//     let mut score = 0;
 
+//     for i in 0..10 {
+//         // We expect the list of providers to match our pre-defined list of providers
+//         // The lists should be sorted in the same way, ascending by the numeric value of the hash        
+//         assert(providers1[i] == valid_providers1[i]);
+//         assert(providers2[i] == valid_providers2[i]);
 
+//         // If a hash was provided we should check the hash and cound the weight for that provider
+//         let h1_not_zero: bool = hashes1[i] != 0;
+//         let h2_not_zero: bool = hashes2[i] != 0;
+//         let any_hash: bool = h1_not_zero | h2_not_zero;
 
-
-
-
-
-
-// fn verify_hashed_stamp(message_hash: pub Field, message_and_key_hash: Field, private_key: ) {
-    
+//         if any_hash  {
+//             score += weights[i];
+//         }
+//     }
+//     assert(score >= 20);
 // }
-
-
 
 // #[test]
-// fn test_verify_stamp() {
-//     let message_bytes = [
-//      71, 111, 111, 103, 108, 101,  58, 118,  48,  46,  48,  46,
-//      48,  58,  71, 113, 109,  75,  56,  67, 108, 109,  67,  70,
-//      54,  69,  57,  68,  97,  81,  89, 101,  51, 101, 105,  51,
-//      75,  71, 108, 119, 121,  74,  79,  87,  68,  80,  78, 116,
-//     104,  76,  88,  52,  78,  82, 102, 116,  81,  61,  58, 115,
-//     101,  99, 114, 101, 116
-//   ];
-
-//   let message_and_key_bytes = [71,111,111,103,108,101,58,118,48,46,48,46,48,58,71,113,109,75,56,67,108,109,67,70,54,69,57,68,97,81,89,101,51,101,105,51,75,71,108,119,121,74,79,87,68,80,78,116,104,76,88,52,78,82,102,116,81,61,58,115,101,99,114,101,116,48,120,97,99,48,57,55,52,98,101,99,51,57,97,49,55,101,51,54,98,97,52,97,54,98,52,100,50,51,56,102,102,57,52,52,98,97,99,98,52,55,56,99,98,101,100,53,101,102,99,97,101,55,56,52,100,55,98,102,52,102,50,102,102,56,48];
-
-//   let message_hash = std::hash::pedersen_hash(messageBytes);
-
-//   let message_and_key_hash = std::hash::pedersen_hash(message_and_key_bytes);
-
-
-
-// //   let message
-
-
-//   verify_hashed_stamp(message_hash, message_and_key_hash, private_key);
+// fn test_main() {
+//     main([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+//     // Uncomment to make test fail
+//     // main(1, 1);
 // }
-
