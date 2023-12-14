@@ -48,6 +48,7 @@ class SECP256k1:
         # hash the message and sign the hash
         message_hash = hashlib.sha256(message).hexdigest()
         message_bytes = bytes.fromhex(message_hash)
+        print("message_hashmessage_hashmessage_hash: ", message_hash)
         signature = private_key.sign_deterministic(
             message_bytes, 
             extra_entropy=b"",
