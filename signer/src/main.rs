@@ -31,7 +31,7 @@ fn hash_and_sign_message(
     println!("Signature: {:?}", signature_bytes);
 
     // Verify the signature
-    let is_valid = verify_key.verify(message, &signed_msg);
+    let is_valid = verify_key.verify(&message_hash, &signed_msg);
 
     match is_valid {
         Ok(_) => println!("Signature is valid!"),
