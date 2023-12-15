@@ -43,7 +43,6 @@ fn main(
         if stamp_hashs[i] != [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             ] {
-
             // If conditions are all met increment points
             score += weights[i];
         }
@@ -144,7 +143,6 @@ fn test_main() {
     );
 }
 
-
 #[test(should_fail_with = "Unsufficient Score")]
 fn test_main_fail() {
     main(
@@ -166,7 +164,7 @@ fn test_main_fail() {
             0, 0, 0, 0,
             0, 0, 0, 0,
             0, 0, 0, 0,
-            0, 0, 0, 0,
+            0, 0, 0, 0
         ]
     ],
         [
