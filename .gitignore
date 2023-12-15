@@ -1,3 +1,5 @@
 .vscode
 target
 proofs
+node_modules
+
