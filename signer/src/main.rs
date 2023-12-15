@@ -10,10 +10,15 @@ use k256::{
 use sha2::{Digest, Sha256};
 
 fn hash_and_sign_message(
-    message: &[u8],
+    hash: &[u8],
+    provider: &[u8],
     signing_key: &SigningKey<Secp256k1>,
     verify_key: &VerifyingKey<Secp256k1>,
+    index: u8,
 ) {
+    // Concatenate the hash and provider
+    let message = [hash, provider].concat();
+
     // Hash the data using SHA-256 to get a 32-byte hash
     let mut hasher = Sha256::new();
     hasher.update(message);
@@ -27,8 +32,7 @@ fn hash_and_sign_message(
     let signed_msg: EcdsaSignature = signing_key.sign(&message_hash);
 
     // Serialize the signature into a byte array
-    let signature_bytes = signed_msg.to_vec();
-    println!("Signature: {:?}", signature_bytes);
+    let signature = signed_msg.to_vec();
 
     // Verify the signature
     let is_valid = verify_key.verify(&message_hash, &signed_msg);
@@ -46,15 +50,13 @@ fn hash_and_sign_message(
     // Convert to uncompressed format as a byte array
     let uncompressed_bytes = encoded_point.as_bytes();
 
-    let x_key_coordinates = &uncompressed_bytes[1..33];
-    let y_key_coordinates = &uncompressed_bytes[33..65];
+    let pub_key_x = &uncompressed_bytes[1..33];
+    let pub_key_y = &uncompressed_bytes[33..65];
 
-    dbg!(
-        x_key_coordinates,
-        y_key_coordinates,
-        signature_bytes,
-        message_hash
-    );
+    println!("let pub_key_x = {:?};", pub_key_x);
+    println!("let pub_key_y = {:?};", pub_key_y);
+    println!("let signature_{} = {:?};", index, signature);
+    println!("let message_hash_{} = {:?};", index, message_hash);
 }
 
 fn main() -> Result<()> {
@@ -65,9 +67,16 @@ fn main() -> Result<()> {
     let verify_key: VerifyingKey<Secp256k1> = VerifyingKey::from(&signing_key);
 
     // Data to be signed
-    let message = b"GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ=googlegooglegooglegooglegoogle";
+    let hash = b"GqmK8ClmCF6E9DaQYe3ei3KGlwyJOWDPNthLX4NRftQ";
+    let provider = b"google";
 
-    hash_and_sign_message(message, &signing_key, &verify_key);
+    hash_and_sign_message(hash, provider, &signing_key, &verify_key, 0);
+
+    // Data to be signed
+    let hash_1 = b"5NMZWaxFcB3PW1OPOeKvX61UOpeggdxcM8N77TVX5qc=";
+    let provider_1 = b"facebook";
+
+    hash_and_sign_message(hash_1, provider_1, &signing_key, &verify_key, 1);
 
     Ok(())
 }
