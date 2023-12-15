@@ -9,6 +9,18 @@ use k256::{
 };
 use sha2::{Digest, Sha256};
 
+fn hash_message_partition(part: &[u8]) -> Vec<u8> {
+    // Hash the data using SHA-256 to get a 32-byte hash
+    let mut hasher = Sha256::new();
+    hasher.update(part);
+    let message_hash = hasher.finalize();
+
+    // Ensure the hash is 32 bytes
+    assert_eq!(message_hash.len(), 32, "Hashed data is not 32 bytes");
+
+    message_hash.to_vec()
+}
+
 fn hash_and_sign_message(
     hash: &[u8],
     provider: &[u8],
@@ -57,6 +69,11 @@ fn hash_and_sign_message(
     println!("let pub_key_y = {:?};", pub_key_y);
     println!("let signature_{} = {:?};", index, signature);
     println!("let message_hash_{} = {:?};", index, message_hash);
+    println!(
+        "let stamp_hash_bytes{} = {:?};",
+        index,
+        hash_message_partition(hash)
+    );
 }
 
 fn main() -> Result<()> {
