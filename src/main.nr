@@ -21,9 +21,6 @@ fn verify_signature(
     // the reason we do this is to ensure persistent input message length (always 32 bytes)
     let message_hash_2 = std::hash::sha256(message_hash);
 
-    println("message_hash_2: ");
-    println(message_hash_2);
-
     let signed_hashed_full_msg = [
         63,
         183,
@@ -63,12 +60,10 @@ fn verify_signature(
     // This is also the same message that is successfully verified in verify_signature_just_message!
     assert(message_hash_2 == signed_hashed_full_msg);
 
-    let valid_signature = std::ecdsa_secp256k1::verify_signature(pub_key_x, pub_key_y, signature, message_hash_2);
+    let message_hash_3 = std::hash::sha256(message_hash_2);
+    let valid_signature = std::ecdsa_secp256k1::verify_signature(pub_key_x, pub_key_y, signature, message_hash_3);
 
-    // 
-    println("valid_signature: ");
-    println(valid_signature);
-    // assert(valid_signature);
+    assert(valid_signature);
 }
 
 #[test]
@@ -109,7 +104,6 @@ fn verify_signature_just_message(
     // hash the message again (this happens when we generate a deterministic signature)
     // the reason we do this is to ensure persistent input message length (always 32 bytes)
     let message_hash_2 = std::hash::sha256(message_hash);
-
     let valid_signature = std::ecdsa_secp256k1::verify_signature(pub_key_x, pub_key_y, signature, message_hash_2);
     assert(valid_signature);
 }
